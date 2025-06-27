@@ -23,23 +23,26 @@ export function StatsCard({ title, value, change, icon: Icon, color = 'blue' }: 
   };
 
   return (
-    <Card>
+    <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
             <p className="text-3xl font-bold text-gray-900">{value}</p>
             {change && (
               <p className={cn(
-                'text-sm font-medium flex items-center mt-1',
+                'text-sm font-medium flex items-center mt-2',
                 change.type === 'increase' ? 'text-green-600' : 'text-red-600'
               )}>
+                <span className="mr-1">
+                  {change.type === 'increase' ? '↗' : '↘'}
+                </span>
                 {change.type === 'increase' ? '+' : '-'}{Math.abs(change.value)}%
-                <span className="ml-1 text-gray-500">önceki aya göre</span>
+                <span className="ml-1 text-gray-500 font-normal">önceki aya göre</span>
               </p>
             )}
           </div>
-          <div className={cn('p-3 rounded-full', colorClasses[color])}>
+          <div className={cn('p-3 rounded-full ml-4', colorClasses[color])}>
             <Icon className="w-6 h-6" />
           </div>
         </div>

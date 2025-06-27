@@ -52,11 +52,11 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await api.post<AuthResponse>('/auth/login', credentials);
-          const { user, token } = response.data;
+          const { user, accessToken } = response.data;
           
           set({ 
             user, 
-            token, 
+            token: accessToken, 
             isLoading: false,
             error: null 
           });

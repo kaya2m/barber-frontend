@@ -2,11 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Navigation } from '@/components/layout/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Loading } from '@/components/ui/loading';
 
-export default function SuperAdminLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -17,21 +16,13 @@ export default function SuperAdminLayout({
   useEffect(() => {
     if (isInitialized && !isLoading) {
       if (!user) {
-        router.push('/login?callbackUrl=' + encodeURIComponent(window.location.pathname));
-        return;
-      }
-      
-      if (user.role !== 'SuperAdmin') {
-        if (user.role === 'Barber') {
-          router.push('/dashboard');
-        } else {
-          router.push('/');
-        }
+        router.push('/login');
         return;
       }
     }
   }, [user, isInitialized, isLoading, router]);
 
+  // Show loading while checking auth
   if (!isInitialized || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -40,7 +31,8 @@ export default function SuperAdminLayout({
     );
   }
 
-  if (!user || user.role !== 'SuperAdmin') {
+  // Show loading if no user
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <Loading size="lg" text="Yönlendiriliyor..." />
@@ -48,9 +40,5 @@ export default function SuperAdminLayout({
     );
   }
 
-  return (
-    <Navigation showSidebar={true}>
-      {children}
-    </Navigation>
-  );
+  return <>{children}</>;
 }

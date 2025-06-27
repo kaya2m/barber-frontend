@@ -11,25 +11,37 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isInitialized } = useAuth();
+  const { user, isInitialized, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isInitialized && !isLoading) {
       if (!user) {
         router.push('/login?callbackUrl=' + encodeURIComponent(window.location.pathname));
-      } else if (user.role !== 'Barber' && user.role !== 'SuperAdmin') {
-        router.push('/dashboard');
+        return;
+      }
+      
+      if (user.role !== 'Barber' && user.role !== 'SuperAdmin') {
+        router.push('/');
+        return;
       }
     }
-  }, [user, isInitialized, router]);
+  }, [user, isInitialized, isLoading, router]);
 
-  if (!isInitialized) {
-    return <Loading />;
+  if (!isInitialized || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <Loading size="lg" text="Yetki kontrol ediliyor..." />
+      </div>
+    );
   }
 
   if (!user || (user.role !== 'Barber' && user.role !== 'SuperAdmin')) {
-    return <Loading />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <Loading size="lg" text="Yönlendiriliyor..." />
+      </div>
+    );
   }
 
   return (

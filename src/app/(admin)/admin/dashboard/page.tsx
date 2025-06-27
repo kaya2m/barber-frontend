@@ -3,18 +3,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { AppointmentList } from '@/components/dashboard/appointment-list';
-import { CalendarView } from '@/components/dashboard/calendar-view';
 import { RecentActivities } from '@/components/dashboard/recent-activities';
 import { useApi } from '@/hooks/use-api';
 import { useAuth } from '@/hooks/use-auth';
 import { api } from '@/lib/api';
 import { 
-  CalendarIcon, 
-  ClockIcon, 
-  CurrencyDollarIcon, 
-  UserGroupIcon,
-  CheckCircleIcon 
-} from '@heroicons/react/24/outline';
+  Calendar, 
+  Clock, 
+  DollarSign, 
+  Users,
+  CheckCircle 
+} from 'lucide-react';
 import { Appointment, RecentActivity } from '@/types/auth';
 
 // Type definitions
@@ -25,42 +24,6 @@ interface DashboardStats {
   completedAppointments: number;
   pendingAppointments: number;
 }
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  role: 'admin' | 'barber' | 'customer';
-}
-
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  serviceType: string;
-  isActive: boolean;
-  requiresFullPayment: boolean;
-}
-
-interface Payment {
-  id: string;
-  appointmentId: string;
-  status: 'Pending' | 'Completed' | 'Failed' | 'Refunded';
-  amount: number;
-  paymentType: 'Deposit' | 'Full' | 'Remaining';
-  transactionId?: string;
-  createdAt: string;
-}
-
-type AppointmentStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
-
-
-
-
 
 // API functions with proper typing
 async function getDashboardStats(): Promise<DashboardStats> {
@@ -78,7 +41,7 @@ async function getRecentActivities(): Promise<RecentActivity[]> {
   return response.data as RecentActivity[];
 }
 
-export default function BarberDashboardPage() {
+export default function AdminDashboardPage() {
   const { user } = useAuth();
   
   // Typed API calls
@@ -120,11 +83,26 @@ export default function BarberDashboardPage() {
   const appointments = todayAppointments ?? mockAppointments;
   const recentActivities = activities ?? mockActivities;
 
+  if (statsLoading) {
+    return (
+      <div className="page-container">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">
-          Hoş geldiniz, {user?.firstName}!
+          Hoş geldiniz, {user?.firstName}! ({user?.role === 'SuperAdmin' ? 'Super Admin' : 'Berber'})
         </h1>
         <p className="page-subtitle">
           Bugünkü randevularınız ve genel durum
@@ -136,28 +114,28 @@ export default function BarberDashboardPage() {
         <StatsCard
           title="Bugünkü Randevular"
           value={dashboardStats.todayAppointments}
-          icon={CalendarIcon}
+          icon={Calendar}
           color="blue"
           change={{ value: 12, type: 'increase' }}
         />
         <StatsCard
           title="Bu Hafta"
           value={dashboardStats.weeklyAppointments}
-          icon={ClockIcon}
+          icon={Clock}
           color="green"
           change={{ value: 8, type: 'increase' }}
         />
         <StatsCard
           title="Aylık Gelir"
           value={`₺${dashboardStats.monthlyRevenue}`}
-          icon={CurrencyDollarIcon}
+          icon={DollarSign}
           color="yellow"
           change={{ value: 15, type: 'increase' }}
         />
         <StatsCard
           title="Bekleyen Randevular"
           value={dashboardStats.pendingAppointments}
-          icon={UserGroupIcon}
+          icon={Users}
           color="red"
         />
       </div>
@@ -178,7 +156,7 @@ export default function BarberDashboardPage() {
             <CardContent className="space-y-3">
               <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-center space-x-3">
-                  <CalendarIcon className="w-5 h-5 text-blue-500" />
+                  <Calendar className="w-5 h-5 text-blue-500" />
                   <div>
                     <div className="font-medium">Müsaitlik Ayarla</div>
                     <div className="text-sm text-gray-500">Çalışma saatlerinizi düzenleyin</div>
@@ -187,7 +165,7 @@ export default function BarberDashboardPage() {
               </button>
               <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-center space-x-3">
-                  <CheckCircleIcon className="w-5 h-5 text-green-500" />
+                  <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
                     <div className="font-medium">Bekleyen Onaylar</div>
                     <div className="text-sm text-gray-500">Randevu onaylarınızı kontrol edin</div>

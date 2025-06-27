@@ -19,7 +19,8 @@ export class AuthService {
       const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
       
       if (response.success && response.data) {
-        localStorage.setItem('auth_token', response.data.token);
+        debugger
+        localStorage.setItem('auth_token', response.data.accessToken);
         if (response.data.refreshToken) {
           localStorage.setItem('refresh_token', response.data.refreshToken);
         }
@@ -73,7 +74,7 @@ export class AuthService {
       });
 
       if (response.success && response.data) {
-        localStorage.setItem('auth_token', response.data.token);
+        localStorage.setItem('auth_token', response.data.accessToken);
         if (response.data.refreshToken) {
           localStorage.setItem('refresh_token', response.data.refreshToken);
         }

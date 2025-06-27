@@ -3,6 +3,7 @@ import { ErrorBoundary } from '@/components/common/error-boundary';
 import { NotificationToast } from '@/components/common/notification-toast';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import './globals.css';
+import { Metadata } from 'next';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -10,7 +11,7 @@ const inter = Inter({
   display: 'swap',
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Berber Randevu - Online Randevu Sistemi',
   description: 'Modern berber hizmetleri için online randevu alma sistemi. Hızlı, kolay ve güvenli.',
   keywords: 'berber, randevu, kuaför, saç kesimi, sakal tıraş',
@@ -32,10 +33,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" className={inter.variable}>
-      <body className={inter.className}>
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <ErrorBoundary>
           <AuthProvider>
-            {children}
+            <div id="__next" className="min-h-screen bg-white">
+              {children}
+            </div>
             <NotificationToast />
           </AuthProvider>
         </ErrorBoundary>

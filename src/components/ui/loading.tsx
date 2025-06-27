@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LoadingProps {
@@ -15,9 +14,9 @@ export function Loading({ size = 'md', className, text }: LoadingProps) {
   };
 
   return (
-    <div className={cn('flex items-center justify-center', className)}>
-      <Loader2 className={cn('animate-spin text-primary-600', sizes[size])} />
-      {text && <span className="ml-2 text-sm text-gray-600">{text}</span>}
+    <div className={cn('flex flex-col items-center justify-center space-y-3', className)}>
+      <div className={cn('animate-spin rounded-full border-2 border-gray-300 border-t-blue-600', sizes[size])} />
+      {text && <span className="text-sm text-gray-600 font-medium">{text}</span>}
     </div>
   );
 }
