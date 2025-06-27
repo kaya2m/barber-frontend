@@ -7,13 +7,13 @@ class ApiClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      baseURL: process.env.PUBLIC_API_URL || 'https://localhost:7147/api',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-
+debugger
     this.setupInterceptors();
   }
 
@@ -100,6 +100,7 @@ class ApiClient {
   }
 
   async post<T>(url: string, data?: any): Promise<ApiResponse<T>> {
+    debugger
     const response = await this.client.post<ApiResponse<T>>(url, data);
     return response.data;
   }

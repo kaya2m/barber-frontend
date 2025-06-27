@@ -2,9 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Custom component styles */
 @layer components {
-  /* Form Styles */
   .form-group {
     @apply space-y-2;
   }

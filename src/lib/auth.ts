@@ -19,7 +19,6 @@ export class AuthService {
       const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
       
       if (response.success && response.data) {
-        // Token'ı localStorage'a kaydet
         localStorage.setItem('auth_token', response.data.token);
         if (response.data.refreshToken) {
           localStorage.setItem('refresh_token', response.data.refreshToken);
