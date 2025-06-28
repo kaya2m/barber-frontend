@@ -10,7 +10,20 @@ export interface User {
   createdAt: string;
 }
 
-export type UserRole = 'Customer' | 'Barber' | 'SuperAdmin';
+export type UserRole = 'Customer' | 'Barber' | 'SuperAdmin' | 1 | 2 | 3;
+
+// Role mapping constants
+export const ROLE_MAP = {
+  1: 'Customer',
+  2: 'Barber', 
+  3: 'SuperAdmin'
+} as const;
+
+export const NUMERIC_ROLES = {
+  Customer: 1,
+  Barber: 2,
+  SuperAdmin: 3
+} as const;
 
 export interface LoginRequest {
   email: string;

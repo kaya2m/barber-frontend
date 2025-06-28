@@ -28,8 +28,8 @@ export class AuthService {
       }
       
       throw new Error(response.message || 'Giriş başarısız');
-    } catch (error: any) {
-      throw new Error(error.message || 'Giriş sırasında bir hata oluştu');
+    } catch (error: unknown) {
+      throw new Error(error instanceof Error ? error.message : 'Giriş sırasında bir hata oluştu');
     }
   }
 
@@ -40,8 +40,8 @@ export class AuthService {
       if (!response.success) {
         throw new Error(response.message || 'Kayıt başarısız');
       }
-    } catch (error: any) {
-      throw new Error(error.message || 'Kayıt sırasında bir hata oluştu');
+    } catch (error: unknown) {
+      throw new Error(error instanceof Error ? error.message : 'Kayıt sırasında bir hata oluştu');
     }
   }
 
@@ -49,13 +49,11 @@ export class AuthService {
     try {
       const token = localStorage.getItem('auth_token');
       if (token) {
-        // Backend'e logout isteği gönder
         await api.post(API_ENDPOINTS.AUTH.LOGOUT);
       }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Her durumda local storage'ı temizle
       localStorage.removeItem('auth_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
@@ -89,7 +87,7 @@ export class AuthService {
     }
   }
 
-  async getCurrentUser(): Promise<any> {
+  async getCurrentUser(): Promise<unknown> {
     try {
       const response = await api.get(API_ENDPOINTS.AUTH.ME);
       
@@ -115,8 +113,8 @@ export class AuthService {
       if (!response.success) {
         throw new Error(response.message || 'Şifre değiştirme başarısız');
       }
-    } catch (error: any) {
-      throw new Error(error.message || 'Şifre değiştirme sırasında bir hata oluştu');
+    } catch (error: unknown) {
+      throw new Error(error instanceof Error ? error.message : 'Şifre değiştirme sırasında bir hata oluştu');
     }
   }
 
@@ -125,7 +123,7 @@ export class AuthService {
     return localStorage.getItem('auth_token');
   }
 
-  getUser(): any | null {
+  getUser(): unknown | null {
     if (typeof window === 'undefined') return null;
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;

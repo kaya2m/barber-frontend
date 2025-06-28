@@ -13,8 +13,6 @@ import {
   UserIcon, 
   PhoneIcon,
   EnvelopeIcon,
-  MapPinIcon,
-  CreditCardIcon,
   ArrowLeftIcon
 } from '@heroicons/react/24/outline';
 
@@ -69,7 +67,6 @@ export default function AppointmentDetailsPage() {
   const router = useRouter();
   const appointmentId = params.id as string;
 
-  // Type the hook with the expected return type
   const { data: appointment, loading } = useApi<Appointment>(() => getAppointmentDetails(appointmentId));
 
   const mockAppointment: Appointment = {

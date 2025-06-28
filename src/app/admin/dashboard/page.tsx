@@ -46,8 +46,8 @@ export default function AdminDashboardPage() {
   
   // Typed API calls
   const { data: stats, loading: statsLoading } = useApi<DashboardStats>(getDashboardStats);
-  const { data: todayAppointments, loading: appointmentsLoading } = useApi<Appointment[]>(getTodayAppointments);
-  const { data: activities, loading: activitiesLoading } = useApi<RecentActivity[]>(getRecentActivities);
+  const { data: todayAppointments } = useApi<Appointment[]>(getTodayAppointments);
+  const { data: activities } = useApi<RecentActivity[]>(getRecentActivities);
 
   // Mock data with proper typing
   const mockStats: DashboardStats = {

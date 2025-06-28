@@ -4,6 +4,8 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { mapRoleToString } from '@/lib/role-utils';
+import { UserRole } from '@/types/auth';
 import { 
   Home, 
   Calendar, 
@@ -14,7 +16,7 @@ import {
 } from 'lucide-react';
 
 interface SidebarProps {
-  userRole: 'Customer' | 'Barber' | 'SuperAdmin';
+  userRole: UserRole;
 }
 
 interface SidebarItemProps {
@@ -52,24 +54,25 @@ export function Sidebar({ userRole }: SidebarProps) {
   ];
 
   const barberMenuItems = [
-    { href: '/dashboard', icon: <Home className="w-5 h-5" />, label: 'Dashboard' },
-    { href: '/appointments', icon: <Calendar className="w-5 h-5" />, label: 'Randevular' },
-    { href: '/availability', icon: <Calendar className="w-5 h-5" />, label: 'Müsaitlik' },
-    { href: '/customers', icon: <Users className="w-5 h-5" />, label: 'Müşteriler' },
+    { href: '/admin/dashboard', icon: <Home className="w-5 h-5" />, label: 'Dashboard' },
+    { href: '/admin/appointments', icon: <Calendar className="w-5 h-5" />, label: 'Randevular' },
+    { href: '/admin/availability', icon: <Calendar className="w-5 h-5" />, label: 'Müsaitlik' },
+    { href: '/admin/customers', icon: <Users className="w-5 h-5" />, label: 'Müşteriler' },
     { href: '/profile', icon: <Settings className="w-5 h-5" />, label: 'Profil' },
   ];
 
   const superAdminMenuItems = [
-    { href: '/dashboard', icon: <Home className="w-5 h-5" />, label: 'Dashboard' },
-    { href: '/appointments', icon: <Calendar className="w-5 h-5" />, label: 'Tüm Randevular' },
-    { href: '/barbers', icon: <Users className="w-5 h-5" />, label: 'Berberler' },
-    { href: '/services', icon: <Scissors className="w-5 h-5" />, label: 'Hizmetler' },
-    { href: '/reports', icon: <BarChart3 className="w-5 h-5" />, label: 'Raporlar' },
+    { href: '/super-admin/superadmin-dashboard', icon: <Home className="w-5 h-5" />, label: 'Dashboard' },
+    { href: '/admin/appointments', icon: <Calendar className="w-5 h-5" />, label: 'Tüm Randevular' },
+    { href: '/super-admin/barbers', icon: <Users className="w-5 h-5" />, label: 'Berberler' },
+    { href: '/super-admin/services', icon: <Scissors className="w-5 h-5" />, label: 'Hizmetler' },
+    { href: '/super-admin/reports', icon: <BarChart3 className="w-5 h-5" />, label: 'Raporlar' },
     { href: '/settings', icon: <Settings className="w-5 h-5" />, label: 'Ayarlar' },
   ];
 
   const getMenuItems = () => {
-    switch (userRole) {
+    const stringRole = mapRoleToString(userRole);
+    switch (stringRole) {
       case 'Customer':
         return customerMenuItems;
       case 'Barber':

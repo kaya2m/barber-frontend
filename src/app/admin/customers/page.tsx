@@ -65,9 +65,9 @@ export default function CustomersPage() {
     }
   ];
 
-  const customersData = customers || mockCustomers;
+  const customersData = (customers as typeof mockCustomers) || mockCustomers;
 
-  const filteredCustomers = customersData.filter((customer: any) => {
+  const filteredCustomers = customersData.filter((customer: typeof mockCustomers[0]) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     const fullName = `${customer.firstName} ${customer.lastName}`.toLowerCase();
@@ -169,7 +169,7 @@ export default function CustomersPage() {
             </CardContent>
           </Card>
         ) : (
-          sortedCustomers.map((customer: any) => {
+          sortedCustomers.map((customer: typeof mockCustomers[0]) => {
             const category = getCustomerCategory(customer.totalAppointments);
             
             return (
@@ -182,7 +182,7 @@ export default function CustomersPage() {
                         <h3 className="text-lg font-semibold">
                           {customer.firstName} {customer.lastName}
                         </h3>
-                        <Badge variant={category.color as any}>
+                        <Badge variant={category.color as 'warning' | 'info' | 'success' | 'default'}>
                           {category.label}
                         </Badge>
                       </div>

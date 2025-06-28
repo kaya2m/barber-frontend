@@ -7,6 +7,7 @@ import { Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Dropdown, DropdownItem } from '@/components/ui/dropdown';
 import { useAuth } from '@/hooks/use-auth';
+import { isCustomer, isBarber, isSuperAdmin } from '@/lib/role-utils';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,6 +17,18 @@ export function Header() {
   const handleLogout = () => {
     logout();
     router.push('/');
+  };
+
+  const getDashboardUrl = () => {
+    if (!user) return '/dashboard';
+    
+    if (isSuperAdmin(user.role)) {
+      return '/super-admin/superadmin-dashboard';
+    } else if (isBarber(user.role)) {
+      return '/admin/dashboard';
+    } else {
+      return '/dashboard';
+    }
   };
 
   return (
@@ -56,12 +69,14 @@ export function Header() {
                   </button>
                 }
               >
-                <DropdownItem onClick={() => router.push('/dashboard')}>
+                <DropdownItem onClick={() => router.push(getDashboardUrl())}>
                   Dashboard
                 </DropdownItem>
-                <DropdownItem onClick={() => router.push('/my-appointments')}>
-                  Randevularım
-                </DropdownItem>
+                {isCustomer(user.role) && (
+                  <DropdownItem onClick={() => router.push('/my-appointments')}>
+                    Randevularım
+                  </DropdownItem>
+                )}
                 <DropdownItem onClick={() => router.push('/profile')}>
                   Profil
                 </DropdownItem>
@@ -129,19 +144,21 @@ export function Header() {
                   {user.firstName} {user.lastName}
                 </div>
                 <Link
-                  href="/dashboard"
+                  href={getDashboardUrl()}
                   className="block text-gray-700 hover:text-primary-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
-                <Link
-                  href="/my-appointments"
-                  className="block text-gray-700 hover:text-primary-600"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Randevularım
-                </Link>
+                {isCustomer(user.role) && (
+                  <Link
+                    href="/my-appointments"
+                    className="block text-gray-700 hover:text-primary-600"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Randevularım
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left text-gray-700 hover:text-primary-600"

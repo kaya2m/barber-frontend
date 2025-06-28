@@ -15,14 +15,11 @@ import {
   ClockIcon, 
   UserIcon, 
   MagnifyingGlassIcon,
-  FunnelIcon,
   CheckIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import { Appointment } from '@/types/auth';
-
-
 
 async function getBarberAppointments(): Promise<Appointment[]> {
   const response = await api.get('/appointments/barber');
@@ -42,19 +39,39 @@ export default function AppointmentsPage() {
 
   const { data: appointments, loading, execute: refetch } = useApi<Appointment[]>(getBarberAppointments);
 
-  const mockAppointments: any[] = [
+  const mockAppointments: Appointment[] = [
     {
       id: '1',
       customerId: '101',
       barberId: '201',
       salonId: '301',
       serviceId: '401',
-      customer: { firstName: 'Ahmet', lastName: 'Yılmaz', phoneNumber: '0555 123 45 67' },
-      service: { name: 'Saç Kesimi', duration: 30 },
+      customer: { 
+        id: '101', 
+        firstName: 'Ahmet', 
+        lastName: 'Yılmaz', 
+        email: 'ahmet@example.com',
+        phoneNumber: '0555 123 45 67',
+        role: 'Customer' as const,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      },
+      service: { 
+        id: '401',
+        name: 'Saç Kesimi', 
+        description: 'Profesyonel saç kesimi',
+        price: 50,
+        duration: 30,
+        serviceType: 'Regular' as const,
+        isActive: true,
+        requiresFullPayment: false
+      },
       appointmentDate: new Date().toISOString(),
       status: 'Pending',
       totalAmount: 50,
-      notes: 'Kısa kesim istiyorum'
+      depositAmount: 10,
+      notes: 'Kısa kesim istiyorum',
+      createdAt: new Date().toISOString()
     },
     {
       id: '2',
@@ -62,12 +79,32 @@ export default function AppointmentsPage() {
       barberId: '202',
       salonId: '302',
       serviceId: '402',
-      customer: { firstName: 'Mehmet', lastName: 'Kaya', phoneNumber: '0555 234 56 78' },
-      service: { name: 'Saç + Sakal', duration: 45 },
+      customer: { 
+        id: '102', 
+        firstName: 'Mehmet', 
+        lastName: 'Kaya', 
+        email: 'mehmet@example.com',
+        phoneNumber: '0555 234 56 78',
+        role: 'Customer' as const,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      },
+      service: { 
+        id: '402',
+        name: 'Saç + Sakal', 
+        description: 'Saç kesimi ve sakal tıraş',
+        price: 80,
+        duration: 45,
+        serviceType: 'Regular' as const,
+        isActive: true,
+        requiresFullPayment: false
+      },
       appointmentDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
       status: 'Confirmed',
       totalAmount: 80,
-      notes: null
+      depositAmount: 15,
+      notes: undefined,
+      createdAt: new Date().toISOString()
     },
     {
       id: '3',
@@ -75,16 +112,36 @@ export default function AppointmentsPage() {
       barberId: '203',
       salonId: '303',
       serviceId: '403',
-      customer: { firstName: 'Ali', lastName: 'Demir', phoneNumber: '0555 345 67 89' },
-      service: { name: 'VIP Paket', duration: 60 },
+      customer: { 
+        id: '103', 
+        firstName: 'Ali', 
+        lastName: 'Demir', 
+        email: 'ali@example.com',
+        phoneNumber: '0555 345 67 89',
+        role: 'Customer' as const,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      },
+      service: { 
+        id: '403',
+        name: 'VIP Paket', 
+        description: 'VIP hizmet paketi',
+        price: 150,
+        duration: 60,
+        serviceType: 'VIPRoom' as const,
+        isActive: true,
+        requiresFullPayment: true
+      },
       appointmentDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       status: 'Pending',
       totalAmount: 150,
-      notes: 'VIP oda tercih ediyorum'
+      depositAmount: 30,
+      notes: 'VIP oda tercih ediyorum',
+      createdAt: new Date().toISOString()
     }
   ];
 
-  const filteredAppointments = ( mockAppointments).filter((appointment: any) => {
+  const filteredAppointments = mockAppointments.filter((appointment: Appointment) => {
     if (filter === 'pending' && appointment.status !== 'Pending') return false;
     if (filter === 'confirmed' && appointment.status !== 'Confirmed') return false;
     if (filter === 'today') {
@@ -95,8 +152,8 @@ export default function AppointmentsPage() {
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const customerName = `${appointment.customer.firstName} ${appointment.customer.lastName}`.toLowerCase();
-      const serviceName = appointment.service.name.toLowerCase();
+      const customerName = `${appointment.customer?.firstName || ''} ${appointment.customer?.lastName || ''}`.toLowerCase();
+      const serviceName = appointment.service?.name?.toLowerCase() || '';
       if (!customerName.includes(query) && !serviceName.includes(query)) {
         return false;
       }
@@ -250,14 +307,14 @@ export default function AppointmentsPage() {
               </CardContent>
             </Card>
           ) : (
-            filteredAppointments.map((appointment: any) => (
+            filteredAppointments.map((appointment: Appointment) => (
               <Card key={appointment.id}>
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 space-y-3">
                       {/* Service & Status */}
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">{appointment.service.name}</h3>
+                        <h3 className="text-lg font-semibold">{appointment.service?.name}</h3>
                         <Badge variant={getStatusColor(appointment.status)}>
                           {getStatusLabel(appointment.status)}
                         </Badge>
@@ -268,10 +325,10 @@ export default function AppointmentsPage() {
                         <div className="flex items-center space-x-1">
                           <UserIcon className="w-4 h-4" />
                           <span>
-                            {appointment.customer.firstName} {appointment.customer.lastName}
+                            {appointment.customer?.firstName} {appointment.customer?.lastName}
                           </span>
                         </div>
-                        <span>{appointment.customer.phoneNumber}</span>
+                        <span>{appointment.customer?.phoneNumber}</span>
                       </div>
 
                       {/* Date & Time */}
@@ -284,7 +341,7 @@ export default function AppointmentsPage() {
                           <ClockIcon className="w-4 h-4" />
                           <span>{formatTime(appointment.appointmentDate)}</span>
                         </div>
-                        <span>({appointment.service.duration} dk)</span>
+                        <span>({appointment.service?.duration} dk)</span>
                       </div>
 
                       {/* Amount */}

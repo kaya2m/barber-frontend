@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/layout/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Loading } from '@/components/ui/loading';
+import { isCustomer, isBarber, isSuperAdmin } from '@/lib/role-utils';
 
 export default function CustomerLayout({
   children,
@@ -22,8 +23,14 @@ export default function CustomerLayout({
       }
       
       // Check if user has customer role
-      if (user.role !== 'Customer') {
-        router.push('/dashboard');
+      if (!isCustomer(user.role)) {
+        if (isSuperAdmin(user.role)) {
+          router.push('/super-admin/superadmin-dashboard');
+        } else if (isBarber(user.role)) {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
         return;
       }
     }
@@ -39,7 +46,7 @@ export default function CustomerLayout({
   }
 
   // Show loading if no user or wrong role
-  if (!user || user.role !== 'Customer') {
+  if (!user || !isCustomer(user.role)) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <Loading size="lg" text="Yönlendiriliyor..." />

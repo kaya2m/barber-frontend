@@ -32,8 +32,9 @@ export default function RegisterPage() {
       await registerUser(data);
       toast.success('Kayıt başarılı! Giriş yapabilirsiniz.');
       router.push('/login');
-    } catch (error: any) {
-      toast.error(error.message || 'Kayıt başarısız');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Kayıt başarısız';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -125,7 +126,7 @@ export default function RegisterPage() {
           <Link href="/privacy" className="text-primary-600 hover:text-primary-700">
             Gizlilik Politikası
           </Link>
-          'nı kabul etmiş olursunuz.
+          &apos;nı kabul etmiş olursunuz.
         </div>
       </CardContent>
     </Card>

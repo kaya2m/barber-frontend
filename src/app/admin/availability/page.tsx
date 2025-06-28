@@ -8,7 +8,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ClockIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
 interface TimeSlot {
@@ -26,7 +25,6 @@ interface WorkingDay {
 
 export default function AvailabilityPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<'week' | 'day'>('week');
 
   const [workingDays, setWorkingDays] = useState<WorkingDay[]>([
     {

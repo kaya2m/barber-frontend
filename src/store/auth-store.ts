@@ -62,8 +62,8 @@ export const useAuthStore = create<AuthState>()(
           });
           
           return response.data;
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Giriş başarısız';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Giriş başarısız';
           set({ 
             isLoading: false, 
             error: errorMessage,
@@ -80,8 +80,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           await api.post('/auth/register', userData);
           set({ isLoading: false });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Kayıt başarısız';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Kayıt başarısız';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -118,8 +118,8 @@ export const useAuthStore = create<AuthState>()(
             user: response.data, 
             isLoading: false 
           });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Profil güncellenemedi';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Profil güncellenemedi';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -134,8 +134,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           await api.put('/auth/change-password', data);
           set({ isLoading: false });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Şifre değiştirilemedi';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Şifre değiştirilemedi';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -150,8 +150,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           await api.post('/auth/forgot-password', { email });
           set({ isLoading: false });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'İşlem başarısız';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'İşlem başarısız';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -166,8 +166,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           await api.post('/auth/reset-password', { token, newPassword });
           set({ isLoading: false });
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Şifre sıfırlanamadı';
+        } catch (error: unknown) {
+          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Şifre sıfırlanamadı';
           set({ 
             isLoading: false, 
             error: errorMessage 
@@ -192,7 +192,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false, 
             isInitialized: true 
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('Get user failed:', error);
           set({ 
             user: null, 
@@ -221,7 +221,6 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      // Getters
       isAuthenticated: () => {
         const { user, token } = get();
         return !!(user && token);
@@ -232,7 +231,7 @@ export const useAuthStore = create<AuthState>()(
         if (!user) return false;
         
         if (Array.isArray(role)) {
-          return role.includes(user.role);
+          return role.includes(String(user.role));
         }
         return user.role === role;
       },

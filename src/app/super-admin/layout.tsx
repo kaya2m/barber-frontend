@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/layout/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Loading } from '@/components/ui/loading';
+import { isSuperAdmin, isBarber } from '@/lib/role-utils';
 
 export default function SuperAdminLayout({
   children,
@@ -21,8 +22,8 @@ export default function SuperAdminLayout({
         return;
       }
       
-      if (user.role !== 'SuperAdmin') {
-        if (user.role === 'Barber') {
+      if (!isSuperAdmin(user.role)) {
+        if (isBarber(user.role)) {
           router.push('/dashboard');
         } else {
           router.push('/');
@@ -40,7 +41,7 @@ export default function SuperAdminLayout({
     );
   }
 
-  if (!user || user.role !== 'SuperAdmin') {
+  if (!user || !isSuperAdmin(user.role)) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <Loading size="lg" text="Yönlendiriliyor..." />

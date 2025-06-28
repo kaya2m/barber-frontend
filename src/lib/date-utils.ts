@@ -96,7 +96,7 @@ export function generateTimeSlots(intervalMinutes: number = 30): string[] {
   const [startHours, startMinutes] = workingHours.start.split(':').map(Number);
   const [endHours, endMinutes] = workingHours.end.split(':').map(Number);
   
-  let currentTime = new Date();
+  const currentTime = new Date();
   currentTime.setHours(startHours, startMinutes, 0, 0);
   
   const endTime = new Date();

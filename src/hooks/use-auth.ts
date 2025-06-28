@@ -41,10 +41,10 @@ export const useAuth = create<AuthState>()(
             error: null
           });
           return authResponse;
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({ 
             isLoading: false, 
-            error: error.message || 'Giriş başarısız',
+            error: error instanceof Error ? error.message : 'Giriş başarısız',
             user: null,
             token: null 
           });
@@ -57,10 +57,10 @@ export const useAuth = create<AuthState>()(
         try {
           await authService.register(userData);
           set({ isLoading: false, error: null });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({ 
             isLoading: false, 
-            error: error.message || 'Kayıt başarısız' 
+            error: error instanceof Error ? error.message : 'Kayıt başarısız' 
           });
           throw error;
         }
@@ -86,12 +86,12 @@ export const useAuth = create<AuthState>()(
       updateProfile: async (userData: Partial<User>) => {
         set({ isLoading: true, error: null });
         try {
-          const updatedUser = await authService.getCurrentUser();
+          const updatedUser = await authService.getCurrentUser() as User;
           set({ user: updatedUser, isLoading: false, error: null });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({ 
             isLoading: false, 
-            error: error.message || 'Profil güncellenemedi' 
+            error: error instanceof Error ? error.message : 'Profil güncellenemedi' 
           });
           throw error;
         }
@@ -102,10 +102,10 @@ export const useAuth = create<AuthState>()(
         try {
           await authService.changePassword(currentPassword, newPassword);
           set({ isLoading: false, error: null });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({ 
             isLoading: false, 
-            error: error.message || 'Şifre değiştirilemedi' 
+            error: error instanceof Error ? error.message : 'Şifre değiştirilemedi' 
           });
           throw error;
         }
@@ -120,7 +120,7 @@ export const useAuth = create<AuthState>()(
 
         set({ isLoading: true });
         try {
-          const user = await authService.getCurrentUser();
+          const user = await authService.getCurrentUser() as User;
           set({ user, token, isLoading: false, isInitialized: true, error: null });
         } catch (error) {
           console.error('Auth check failed:', error);
@@ -145,7 +145,7 @@ export const useAuth = create<AuthState>()(
         }
 
         const storedToken = authService.getToken();
-        const storedUser = authService.getUser();
+        const storedUser = authService.getUser() as User;
         
         if (storedUser && storedToken) {
           set({ 
